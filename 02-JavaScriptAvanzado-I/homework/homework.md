@@ -12,28 +12,28 @@ var a = 5;
 var b = 10;
 var c = function (a, b, c) {
    var x = 10;
-   console.log(x);
-   console.log(a);
+   console.log(x);  //-->10, primero pasa como und(var)pero despues toma el valor 10
+   console.log(a);  //-->8 toma el valor porque es llamada por 'c' 
    var f = function (a, b, c) {
       b = a;
-      console.log(b);
+      console.log(b);  //-->8 toma este valor porque antes la declaran como b=a
       b = c;
       var x = 5;
    };
    f(a, b, c);
-   console.log(b);
+   console.log(b);  //-->9 al estar afuera de la fc f si toma el valor que le da 'c'
 };
 c(8, 9, 10);
-console.log(b);
-console.log(x);
+console.log(b);  //-->toma el valor de 10 por fuera de las fcs   
+console.log(x);  //-->toma el valor de 1    "   "  "     "
 ```
 
 ```javascript
-console.log(bar);
-console.log(baz);
+console.log(bar);//-->primero toma und por que esta con var desp 1
+console.log(baz);//--> 2
 foo();
 function foo() {
-   console.log('Hola!');
+   console.log('Hola!');//-->'Hola'
 }
 var bar = 1;
 baz = 2;
@@ -44,32 +44,35 @@ var instructor = 'Tony';
 if (true) {
    var instructor = 'Franco';
 }
-console.log(instructor);
+console.log(instructor);//-->primero toma el valor de 'Tony'despues al meterse en el if toma el valor de 'Franco'.
 ```
 
 ```javascript
 var instructor = 'Tony';
-console.log(instructor);
+console.log(instructor);//-->primero es undef..'Tony'
 (function () {
    if (true) {
       var instructor = 'Franco';
-      console.log(instructor);
+      console.log(instructor);//-->'Franco'
    }
 })();
-console.log(instructor);
+console.log(instructor);//-->undef..'Tony'
 ```
 
 ```javascript
+
+// let y const tienen un scope de bloque
+
 var instructor = 'Tony';
 let pm = 'Franco';
 if (true) {
    var instructor = 'The Flash';
    let pm = 'Reverse Flash';
-   console.log(instructor);
-   console.log(pm);
+   console.log(instructor);//-->undef..despues toma el valord'The Flash'
+   console.log(pm);//-->undedf..'Reverse Flash' 
 }
-console.log(instructor);
-console.log(pm);
+console.log(instructor);//-->und..'The Flash'
+console.log(pm);//-->'Franco'porque se usa el let agarra el valor de una
 ```
 
 ### Coerción de Datos
@@ -77,22 +80,24 @@ console.log(pm);
 ¿Cuál crees que será el resultado de la ejecución de estas operaciones?:
 
 ```javascript
-6 / "3"
-"2" * "3"
-4 + 5 + "px"
-"$" + 4 + 5
-"4" - 2
-"4px" - 2
-7 / 0
-{}[0]
-parseInt("09")
-5 && 2
-2 && 5
-5 || 0
-0 || 5
-[3]+[3]-[10]
-3>2>1
-[] == ![]
+6 / "3" //-> 6 / 3 -> 2
+"2" * "3" //-> 2 * 3 -> 6
+4 + 5 + "px" //-> 9 + px -> 9px
+"$" + 4 + 5 //-> $4 + 5 -> $45
+"4" - 2 // -> 4 - 2 -> 2
+"4px" - 2 // -> "4px" - 2 -> NaN -> Not a Number
+7 / 0 // -> Infinity
+{}[0] // -> {} -> object [0] -> accede a la propiedad 0 de ese obejto, que no existe,por ende arroja Undefined
+parseInt("09") // 9
+// El unico numero que toma el valor de false es -> 0
+5 && 2 // true && true -> 2 (se termina quedando con el ult)
+2 && 5 // "         "  -> 5
+// ||Con que uno sea verdadero, ya se resuelve a verdadero
+5 || 0 // 5
+0 || 5 // 5
+[3]+[3]-[10] // [3] + [3] -> "3" + [3] -> "3" + "3" -> "33" - "10" -> 33 - "10" --> 33 - 10 = 23 
+3>2>1 // 3 > 2 -> true > 1 -> 1 > 1 -> false
+[] == ![] // true
 ```
 
 > Si te quedó alguna duda repasá con [este artículo](http://javascript.info/tutorial/object-conversion).
@@ -102,9 +107,14 @@ parseInt("09")
 ¿Cuál es el output o salida en consola luego de ejecutar este código? Explicar por qué:
 
 ```javascript
+//Contexto Global
+//Fase de creacion -> lexical enviroment {test: fn}
+//Fase de ejecucion -> test() -> contexto local ->
+//                                F.C -> L.E {a: und, foo: fn}
+//                                  F.E ->       
 function test() {
-   console.log(a);
-   console.log(foo());
+   console.log(a);// und
+   console.log(foo());// 2
 
    var a = 1;
    function foo() {
@@ -125,7 +135,7 @@ function getFood(food) {
       var snack = 'Friskies';
       return snack;
    }
-   return snack;
+   return snack; // undef al cambiar el false por el food se saltea el if y snack queda con el valor que tenia en el L.E
 }
 
 getFood(false);
@@ -142,16 +152,16 @@ var obj = {
    prop: {
       fullname: 'Aurelio De Rosa',
       getFullname: function () {
-         return this.fullname;
+         return this.fullname; // el this apunta al objeto que contiene el metodo, osea al prop
       },
    },
 };
 
-console.log(obj.prop.getFullname());
+console.log(obj.prop.getFullname()); // Aurelio de rosas
 
 var test = obj.prop.getFullname;
 
-console.log(test());
+console.log(test()); // undefined
 ```
 
 ### Event loop
@@ -160,8 +170,8 @@ Considerando el siguiente código, ¿Cuál sería el orden en el que se muestra 
 
 ```javascript
 function printing() {
-   console.log(1);
-   setTimeout(function () {
+   console.log(1);           //1,4,3,2, porque cuando ven el 
+   setTimeout(function () {  // setTimeout lo saltea y lo lee despues.
       console.log(2);
    }, 1000);
    setTimeout(function () {
