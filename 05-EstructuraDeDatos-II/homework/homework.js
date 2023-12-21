@@ -10,10 +10,74 @@ Implementar la clase LinkedList, definiendo los siguientes métodos:
   search(isEven), donde isEven es una función que retorna true cuando recibe por parámetro un número par, busca un nodo cuyo valor sea un número par.
   En caso de que la búsqueda no arroje resultados, search debe retornar null.
 */
-function LinkedList() {}
+function LinkedList() {
+  this.head = null;
+}
 
-function Node(value) {}
+function Node(value) {
+  this.value = value;
+  this.next = null;
+}
+LinkedList.prototype.add = function(valor){
+  const node = new Node(valor);
+  let current = this.head;
 
+  if(!this.head){
+    this.head = node;
+  }
+  else{
+    while(current.next){
+      current = current.next;
+    }
+    current.next = node;
+  }
+};
+LinkedList.prototype.remove = function () {
+  let current = this.head;
+
+  //si la lista está vacía..
+  if(!this.head) return null;
+
+  //si la lista tiene un solo nodo..
+  if(current.next === null){
+    this.head = null;
+    return current.value;
+  }
+
+  //si la lista tiene mas de un nodo..
+  while (current.next.next) {
+    current = current.next;
+  }
+  const lastValue = current.next.value;
+  current.next = null;
+  
+  return lastValue;
+};
+
+LinkedList.prototype.search = function (valor) {
+  let current = this.head;
+
+  while (current !== null) {
+    if(typeof valor !== "function"){
+      if (valor === current.value) return current.value;      
+    } else if(valor(current.value)) return current.value;
+    
+    current = current.next;
+  }
+
+  return null;
+}
+const lista = new LinkedList();
+
+console.log(lista);
+lista.add(6)
+lista.add('holis')
+lista.add(true)
+lista.add(75)
+lista.remove()
+
+console.log(lista);
+console.log(lista.search('holis'));
 /* EJERCICIO 2
 Implementar la clase HashTable.
 Nuetra tabla hash, internamente, consta de un arreglo de buckets (slots, contenedores, o casilleros; es decir, posiciones posibles para almacenar la información), donde guardaremos datos en formato clave-valor (por ejemplo, {instructora: 'Ani'}).
