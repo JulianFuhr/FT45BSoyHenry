@@ -91,7 +91,51 @@ La clase debe tener los siguientes métodos:
 
 Ejemplo: supongamos que quiero guardar {instructora: 'Ani'} en la tabla. Primero puedo chequear, con hasKey, si ya hay algo en la tabla con el nombre 'instructora'; luego, invocando set('instructora', 'Ani'), se almacenará el par clave-valor en un bucket específico (determinado al hashear la clave)
 */
-function HashTable() {}
+function HashTable() {
+  this.numBuckets = 35;
+  this.buckets = [];
+}
+//generamos un indice o lugar en el locker
+HashTable.prototype.hash = function(key){
+  let resultado = 0;
+
+  for (let i = 0; i <= key.length; i++){
+    resultado = resultado + key.charCodeAt(i)
+  }
+  return resultado % this.numBuckets //devolver el indice-> 24
+}
+//? guardamos nuevos datos en la hashTable
+HashTable.prototype.set = function (key,value) { // {instructora: 'Ani'} -> 'instructora' - 'Ani'
+
+  if (typeof key != 'string') throw TypeError('Keys must be strings')
+
+  let indice = this.hash(key) // 24
+  
+  if (!this.buckets[indice]) this.buckets[indice] = {}
+
+  this.buckets[indice][key] = value
+
+}
+
+//buscar el valor en el locker
+HashTable.prototype.get = function (key) {
+  let indice = this.hash(key)  // -> 24
+
+  return this.buckets[indice][key]
+}
+
+HashTable.prototype.hasKey = function (key) {
+  if (this.get(key)) return true 
+  return false 
+}
+
+const hashTable = new HashTable()
+
+console.log(hashTable.hash('instructora'));
+
+hashTable.set('ínstructora', 'Ani')
+hashTable.hasKey('instructora')
+
 
 // No modifiquen nada debajo de esta linea
 // --------------------------------
